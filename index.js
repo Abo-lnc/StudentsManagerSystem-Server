@@ -6,12 +6,30 @@ var querystring = require('querystring');
 var studentsData = require('./src/studentsData');   //导入临时学生数据模块
 var userData = require('./src/userData');   // 导入临时用户数据模块
 
+//设置跨域访问
+
 http.createServer(function (req,res) {
 
     res.setHeader("Access-Control-Allow-Origin", "*");  // 跨域
 
     if(req.url === '/getall'){
         res.end(JSON.stringify(studentsData.studentList));
+    }else if(req.url.startsWith('/tomanager') && req.method === 'GET'){
+        console.log(req.url);
+        var newUserData = querystring.parse(url.parse(req.url).query);
+
+        var IsCorrectUser = UserCalibration(newUserData.Uid,newUserData.userPassword);
+
+        console.log(IsCorrectUser);
+        res.statusCode = 200;
+        res.statusMessage = 'OK';
+        if(IsCorrectUser){
+            res.end(JSON.stringify(newUserData))
+        }else{
+            res.end()
+        }
+
+
     }else if(req.url.startsWith('/addstu') && req.method === 'GET'){
 
         req.url = 'http://127.0.0.1:9091'+req.url;
@@ -62,5 +80,14 @@ function delStuData(Dataid) {
         }
     }
     studentsData.studentList.splice(sub,1);
-
 }
+function UserCalibration(Uid,userPassword) {
+    for(var i = 0;i < userData.userData01.length;i++){
+        if(userData.userData01[i].Uid == Uid && userData.userData01[i].userPassword == userPassword){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}
+
