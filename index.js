@@ -6,7 +6,6 @@ var querystring = require('querystring');
 var studentsData = require('./src/studentsData');   //导入临时学生数据模块
 var userData = require('./src/userData');   // 导入临时用户数据模块
 
-//设置跨域访问
 
 http.createServer(function (req,res) {
 
@@ -17,9 +16,7 @@ http.createServer(function (req,res) {
     }else if(req.url.startsWith('/tomanager') && req.method === 'GET'){
         console.log(req.url);
         var newUserData = querystring.parse(url.parse(req.url).query);
-
         var IsCorrectUser = UserCalibration(newUserData.Uid,newUserData.userPassword);
-
         console.log(IsCorrectUser);
         res.statusCode = 200;
         res.statusMessage = 'OK';
@@ -28,7 +25,6 @@ http.createServer(function (req,res) {
         }else{
             res.end()
         }
-
 
     }else if(req.url.startsWith('/addstu') && req.method === 'GET'){
 
@@ -46,18 +42,31 @@ http.createServer(function (req,res) {
         res.end(JSON.stringify(newlistdata));
 
     }else if(req.url.startsWith('/delstu') && req.method === 'GET'){
+
         console.log(req.url);
         var newUrl = url.parse(req.url);
         // console.log(newUrl);
         var dellistdata = querystring.parse(newUrl.query);
-        // console.log(dellistdata.id);
         delStuData(dellistdata.id);
-
         // console.log(studentsData.studentList);
         console.log('删除成功   id='+dellistdata.id);
         res.statusCode = 200;
         res.statusMessage = 'OK';
         res.end(JSON.stringify(studentsData.studentList));
+
+    }else if(req.url.startsWith('/upstu') && req.method === 'GET'){
+
+        var newUpdateData = querystring.parse(url.parse(req.url).query);
+        if(UpdateStuData(newUpdateData.id,newUpdateData.name,newUpdateData.sex)){
+            console.log('修改成功   id='+newUpdateData.id);
+            res.statusCode = 200;
+            res.statusMessage = 'OK';
+            res.end(JSON.stringify(studentsData.studentList));
+        }else{
+            console.log('错误！');
+            res.end();
+        }
+
     }else{
         console.log(req.url);
         res.writeHead(404,'Not Found',{
@@ -81,6 +90,20 @@ function delStuData(Dataid) {
     }
     studentsData.studentList.splice(sub,1);
 }
+
+function UpdateStuData(id,name,sex) {
+    // var num = studentsData.studentList.length;
+    for (var i in studentsData.studentList){
+        if(studentsData.studentList[i].id == id) {
+            studentsData.studentList[i].name = name;
+            studentsData.studentList[i].sex = sex;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function UserCalibration(Uid,userPassword) {
     for(var i = 0;i < userData.userData01.length;i++){
         if(userData.userData01[i].Uid == Uid && userData.userData01[i].userPassword == userPassword){
