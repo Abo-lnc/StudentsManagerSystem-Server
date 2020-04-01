@@ -1,3 +1,7 @@
+# StudentsManagerSystem-Server
+
+* 利用NodeJS开发
+
 ## 相关问题
 
 * 目前为临时后端，尚未与数据库进行连通！该配套服务端只能在一个生命周期内实现增删改查
@@ -8,9 +12,13 @@
 
 ### 0. 需搭配 `StudentsManagerSystem` 前端使用
 
-### 1. 使用 node 运行根目录下的 index.js
+> 在我的项目中的 `StudentsManagerSystem` 项目
 
-### 2. 9091端口
+### 1. `npm install`
+
+### 2. 使用 node 运行根目录下的 index.js
+
+### 3. 9091端口
 
 ## 数据
 
